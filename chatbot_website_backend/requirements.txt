@@ -1,0 +1,6 @@
+Django>=4
+djangorestframework
+pymongo
+matplotlib
+numpy
+pandas

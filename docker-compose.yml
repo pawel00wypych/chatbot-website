@@ -1,0 +1,19 @@
+
+services:
+  django:
+    build:
+      context: ./chatbot_website_backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/chatbot-website
+    depends_on:
+      - mongo
+    environment:
+      - DJANGO_SETTINGS_MODULE=chatbot_website_backend.settings
+
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
