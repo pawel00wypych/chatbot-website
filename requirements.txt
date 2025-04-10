@@ -7,3 +7,4 @@ pandas
 channels
 channels_redis
 daphne>=4.0
+httpx

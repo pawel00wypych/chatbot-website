@@ -25,3 +25,9 @@ services:
     container_name: chatbot-redis
     ports:
       - "6379:6379"
+
+  vllm:
+    build:
+      context: ./vLLM
+    ports:
+      - "9000:9000"
