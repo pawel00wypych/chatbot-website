@@ -2,7 +2,7 @@
 services:
   django:
     build:
-      context: ./chatbot_website_backend
+      context: .
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
@@ -10,10 +10,18 @@ services:
       - .:/chatbot-website
     depends_on:
       - mongo
+      - redis
     environment:
       - DJANGO_SETTINGS_MODULE=chatbot_website_backend.settings
+    command: daphne -b 0.0.0.0 -p 8000 chatbot_website_backend.asgi:application
 
   mongo:
-    image: mongo
+    image: mongo:latest
     ports:
       - "27017:27017"
+
+  redis:
+    image: redis:latest
+    container_name: chatbot-redis
+    ports:
+      - "6379:6379"

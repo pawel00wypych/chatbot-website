@@ -66,8 +66,17 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'chatbot_website_backend.wsgi.application'
+# ASGI for websocket support
+ASGI_APPLICATION  = 'chatbot_website_backend.asgi.application'
 
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("redis", 6379)],
+        },
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases

@@ -12,7 +12,7 @@ COPY requirements.txt .
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
 # Copy project
-COPY chatbot_website_backend/ .
+COPY . .
 
-# Run Django dev server (for production, use gunicorn)
-CMD ["python", "chatbot_website_backend/manage.py", "runserver", "0.0.0.0:8000"]
+# No CMD here — docker-compose handles it
+CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "chatbot_website_backend.asgi:application"]

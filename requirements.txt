@@ -4,3 +4,6 @@ pymongo
 matplotlib
 numpy
 pandas
+channels
+channels_redis
+daphne>=4.0
