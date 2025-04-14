@@ -1,9 +1,9 @@
 Django>=4
 djangorestframework
 pymongo
-matplotlib
 numpy
 pandas
 channels
 channels_redis
 daphne>=4.0
+google-generativeai
