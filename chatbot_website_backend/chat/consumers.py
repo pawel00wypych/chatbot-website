@@ -1,6 +1,10 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
-import httpx
+from transformers import pipeline
+import asyncio
+
+# download pipeline once (outside the class so its not reloaded each time
+model = pipeline("text2text-generation", model="google/flan-t5-small")
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -11,27 +15,37 @@ class ChatConsumer(AsyncWebsocketConsumer):
         pass
 
     async def receive(self, text_data):
-        data = json.loads(text_data)
-        user_msg = data.get("message")
+        try:
+            data = json.loads(text_data)
+            user_msg = data.get("message")
 
-        # Send prompt to vLLM running on port 9000
-        async with httpx.AsyncClient() as client:
-            response = await client.post(
-                "http://localhost:9000/v1/completions",
-                json={
-                    "model": "gpt2",
-                    "prompt": user_msg,
-                    "max_tokens": 50,
-                },
-                timeout=60.0
-            )
+            if not user_msg:
+                await self.send(text_data=json.dumps({"error": "Empty message"}))
+                return
 
-        if response.status_code == 200:
-            result = response.json()
-            bot_response = result["choices"][0]["text"].strip()
-        else:
-            bot_response = "Oops! GPT-2 didn't respond."
+            loop = asyncio.get_event_loop()
 
-        await self.send(text_data=json.dumps({
-            "message": bot_response
-        }))
+            try:
+                result = await asyncio.wait_for(
+                    loop.run_in_executor(
+                        None,
+                        lambda: model(user_msg, max_length=100, num_return_sequences=1)
+                    ),
+                    timeout=200
+                )
+            except asyncio.TimeoutError:
+                await self.send(text_data=json.dumps({
+                    "error": "Model took too long to respond. Try again later."
+                }))
+                return
+
+            print(result)
+            bot_response = result[0]['generated_text']
+
+            await self.send(text_data=json.dumps({
+                "message": bot_response
+            }))
+        except Exception as e:
+            await self.send(text_data=json.dumps({
+                "error": f"Error message: {str(e)}"
+            }))

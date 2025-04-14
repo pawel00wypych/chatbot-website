@@ -2,9 +2,10 @@ Django>=4
 djangorestframework
 pymongo
 matplotlib
-numpy
+numpy<2
 pandas
 channels
 channels_redis
 daphne>=4.0
-httpx
+torch==2.1.0
+transformers==4.36.2
