@@ -1,5 +1,5 @@
 """
-ASGI config for chatbot_website_backend project.
+ASGI config for chatbot_backend project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -11,15 +11,15 @@ import os
 from channels.routing import ProtocolTypeRouter, URLRouter
 from django.core.asgi import get_asgi_application
 from channels.auth import AuthMiddlewareStack
-import chatbot_website_backend.chat.routing
+import chatbot_backend.chat.routing
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'chatbot_website_backend.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'chatbot_backend.settings')
 
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),
     "websocket": AuthMiddlewareStack(
         URLRouter(
-            chatbot_website_backend.chat.routing.websocket_urlpatterns
+            chatbot_backend.chat.routing.websocket_urlpatterns
         )
     ),
 })
