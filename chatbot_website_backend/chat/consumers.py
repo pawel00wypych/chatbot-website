@@ -1,10 +1,13 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
-from transformers import pipeline
 import asyncio
+import os
+import google.generativeai as genai
 
-# download pipeline once (outside the class so its not reloaded each time
-model = pipeline("text2text-generation", model="google/flan-t5-small")
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+genai.configure(api_key=GEMINI_API_KEY)
+model = genai.GenerativeModel("gemini-2.0-flash")
+
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -29,7 +32,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 result = await asyncio.wait_for(
                     loop.run_in_executor(
                         None,
-                        lambda: model(user_msg, max_length=100, num_return_sequences=1)
+                        lambda: model.generate_content(user_msg,
+                                                  stream=True)
                     ),
                     timeout=200
                 )
@@ -40,7 +44,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 return
 
             print(result)
-            bot_response = result[0]['generated_text']
+            text_chunks = []
+            for chunk in result:
+                if chunk.text:
+                    text_chunks.append(chunk.text)
+
+            bot_response = "".join(text_chunks)
 
             await self.send(text_data=json.dumps({
                 "message": bot_response

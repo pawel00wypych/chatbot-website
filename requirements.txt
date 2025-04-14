@@ -1,11 +1,9 @@
 Django>=4
 djangorestframework
 pymongo
-matplotlib
-numpy<2
+numpy
 pandas
 channels
 channels_redis
 daphne>=4.0
-torch==2.1.0
-transformers==4.36.2
+google-generativeai
