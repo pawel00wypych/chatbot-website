@@ -5,6 +5,8 @@ import os
 import google.generativeai as genai
 
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+if not GEMINI_API_KEY:
+    print("GEMINI_API_KEY is not set!")
 genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel("gemini-2.0-flash")
 
@@ -18,6 +20,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         pass
 
     async def receive(self, text_data):
+        print("Received data:", text_data)
         try:
             data = json.loads(text_data)
             user_msg = data.get("message")
