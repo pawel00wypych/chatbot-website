@@ -26,6 +26,7 @@ COPY requirements.txt .
 
 # Install Python dependencies (including Daphne)
 RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install twisted[http2,tls]
 
 # Copy frontend build
 COPY --from=frontend /chatbot_frontend/build /usr/share/nginx/html
@@ -39,5 +40,5 @@ EXPOSE 8000
 
 # Start everything
 CMD sh -c "envsubst '\$PORT' < /etc/nginx/conf.d/default.conf > /etc/nginx/conf.d/default.conf && \
-           daphne -b 127.0.0.1 -p 8000 chatbot_backend.asgi:application & \
-           nginx -g 'daemon off;'"
+           daphne --access-log -b 127.0.0.1 -p 8000 chatbot_backend.asgi:application & \
+           cat /etc/nginx/conf.d/default.conf   nginx -g 'daemon off;'"
