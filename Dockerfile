@@ -8,7 +8,7 @@ RUN npm run build
 # ==== backend build ====
 FROM python:3.11 AS backend
 WORKDIR /chatbot-website
-COPY chatbot_backend/ ./chatbot_backend
+COPY chatbot_backend/ /chatbot-website/chatbot_backend
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 RUN python manage.py collectstatic --noinput
