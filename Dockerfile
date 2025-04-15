@@ -13,14 +13,21 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN python manage.py collectstatic --noinput
 
 # ==== production image ====
-FROM nginx:alpine
-COPY nginx/default.conf /etc/nginx/conf.d/default.conf
+FROM python:3.11 AS prod
 
-# Kopiuj build frontendu
+# Install Daphne + Nginx
+RUN apt-get update && apt-get install -y nginx
+
+WORKDIR /app
+COPY --from=backend /chatbot-website /app
 COPY --from=frontend /app/build /usr/share/nginx/html
 
-# Kopiuj statyczne pliki Django (jeśli używasz collectstatic)
-COPY --from=backend /chatbot-website/static /static/
+# Copy Nginx config
+COPY nginx/default.conf /etc/nginx/conf.d/default.conf
 
-# Port domyślny Nginx
+# Expose both ports (80 for Nginx, 8000 for Daphne)
 EXPOSE 80
+EXPOSE 8000
+
+# Start both Nginx and Daphne
+CMD sh -c "nginx && daphne -b 0.0.0.0 -p 8000 chatbot_backend.asgi:application"
