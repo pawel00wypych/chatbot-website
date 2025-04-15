@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels',
+    'chatbot_backend.chat',
 ]
 
 MIDDLEWARE = [
@@ -71,13 +73,15 @@ TEMPLATES = [
 ]
 
 # ASGI for websocket support
+ASGI_APPLICATION = "chatbot_backend.asgi.application"
+
 REDIS_URL = os.environ.get("REDIS_URL", "redis://localhost:6379")
 
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [REDIS_URL],
+            "hosts": [(os.getenv("REDISHOST"), int(os.getenv("REDISPORT", 6379)))],
         },
     },
 }
