@@ -71,13 +71,13 @@ TEMPLATES = [
 ]
 
 # ASGI for websocket support
-ASGI_APPLICATION  = 'chatbot_backend.asgi.application'
+REDIS_URL = os.environ.get("REDIS_URL", "redis://localhost:6379")
 
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [os.environ.get("REDIS_URL")],
+            "hosts": [REDIS_URL],
         },
     },
 }

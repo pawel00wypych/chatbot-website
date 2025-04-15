@@ -16,7 +16,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.urls import re_path
+from chatbot_backend.chat import consumers
+
+websocket_urlpatterns = [
+    re_path(r'ws/chat/$', consumers.ChatConsumer.as_asgi()),  # Path for WebSocket chat
+]
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 ]
+
+# Add the WebSocket URL patterns to the main `urlpatterns`
+urlpatterns += websocket_urlpatterns
