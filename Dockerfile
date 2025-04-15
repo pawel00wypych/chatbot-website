@@ -15,31 +15,21 @@ RUN python manage.py collectstatic --noinput
 # ==== production image ====
 FROM python:3.11 AS prod
 
-# Install Nginx
-RUN apt-get update && apt-get install -y nginx gettext
-
+# Instalacja zależności Python
 WORKDIR /chatbot-website
 
-# Copy entire app and requirements
+# Kopiowanie aplikacji backendowej
 COPY --from=backend /chatbot-website /chatbot-website
 COPY requirements.txt .
 
-# Install Python dependencies (including Daphne)
+# Instalowanie zależności
 RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install twisted[http2,tls]
 
-# Copy frontend build
-COPY --from=frontend /chatbot_frontend/build /usr/share/nginx/html
+# Kopiowanie builda frontendowego do katalogu static
+COPY --from=frontend /chatbot_frontend/build /chatbot_website/static
 
-# Copy Nginx config
-COPY nginx/default.conf /etc/nginx/conf.d/default.conf
-
-# Expose ports
-EXPOSE 80
+# Ekspozycja portów
 EXPOSE 8000
 
-# Start everything
-CMD sh -c "envsubst '\$PORT' < /etc/nginx/conf.d/default.conf > /etc/nginx/conf.d/default.conf && \
-           daphne --access-log -b 127.0.0.1 -p 8000 chatbot_backend.asgi:application & \
-           cat /etc/nginx/conf.d/default.conf && \
-           nginx -g 'daemon off;'"
+# Uruchomienie aplikacji Django za pomocą Daphne
+CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "chatbot_backend.asgi:application"]
