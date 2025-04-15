@@ -16,7 +16,7 @@ RUN python manage.py collectstatic --noinput
 FROM python:3.11 AS prod
 
 # Install Nginx
-RUN apt-get update && apt-get install -y nginx
+RUN apt-get update && apt-get install -y nginx gettext
 
 WORKDIR /chatbot-website
 
