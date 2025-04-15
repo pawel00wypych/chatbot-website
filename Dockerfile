@@ -28,7 +28,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy frontend build
-COPY --from=frontend /app/build /usr/share/nginx/html
+COPY --from=frontend /chatbot_frontend/build /usr/share/nginx/html
 
 # Copy Nginx config
 COPY nginx/default.conf /etc/nginx/conf.d/default.conf
