@@ -1,6 +1,6 @@
 # ==== frontend build ====
 FROM node:18 AS frontend
-WORKDIR /app
+WORKDIR /chatbot_frontend
 COPY chatbot_frontend/ .
 RUN npm install
 RUN npm run build
@@ -18,10 +18,10 @@ FROM python:3.11 AS prod
 # Install Nginx
 RUN apt-get update && apt-get install -y nginx
 
-WORKDIR /app
+WORKDIR /chatbot-website
 
 # Copy entire app and requirements
-COPY --from=backend /chatbot-website /app
+COPY --from=backend /chatbot-website /chatbot-website
 COPY requirements.txt .
 
 # Install Python dependencies (including Daphne)
