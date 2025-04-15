@@ -7,3 +7,4 @@ channels
 channels_redis
 daphne>=4.0
 google-generativeai
+dj-database-url
