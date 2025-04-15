@@ -15,19 +15,27 @@ RUN python manage.py collectstatic --noinput
 # ==== production image ====
 FROM python:3.11 AS prod
 
-# Install Daphne + Nginx
+# Install Nginx
 RUN apt-get update && apt-get install -y nginx
 
 WORKDIR /app
+
+# Copy entire app and requirements
 COPY --from=backend /chatbot-website /app
+COPY requirements.txt .
+
+# Install Python dependencies (including Daphne)
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy frontend build
 COPY --from=frontend /app/build /usr/share/nginx/html
 
 # Copy Nginx config
 COPY nginx/default.conf /etc/nginx/conf.d/default.conf
 
-# Expose both ports (80 for Nginx, 8000 for Daphne)
+# Expose ports
 EXPOSE 80
 EXPOSE 8000
 
-# Start both Nginx and Daphne
+# Start everything
 CMD sh -c "nginx && daphne -b 0.0.0.0 -p 8000 chatbot_backend.asgi:application"
