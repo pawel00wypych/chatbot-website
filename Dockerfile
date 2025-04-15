@@ -38,4 +38,4 @@ EXPOSE 80
 EXPOSE 8000
 
 # Start everything
-CMD sh -c "daphne -b 0.0.0.0 -p ${PORT:-8000} chatbot_backend.asgi:application & nginx -g 'daemon off;'"
+CMD sh -c "daphne -b 0.0.0.0 -p ${PORT:-8080} chatbot_backend.asgi:application & nginx -g 'daemon off;'"
