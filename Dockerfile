@@ -41,4 +41,5 @@ EXPOSE 8000
 # Start everything
 CMD sh -c "envsubst '\$PORT' < /etc/nginx/conf.d/default.conf > /etc/nginx/conf.d/default.conf && \
            daphne --access-log -b 127.0.0.1 -p 8000 chatbot_backend.asgi:application & \
-           cat /etc/nginx/conf.d/default.conf   nginx -g 'daemon off;'"
+           cat /etc/nginx/conf.d/default.conf && \
+           nginx -g 'daemon off;'"
