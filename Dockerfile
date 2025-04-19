@@ -1,35 +1,53 @@
-# ==== frontend build ====
+# Step 1: Build React frontend
 FROM node:18 AS frontend
-WORKDIR /chatbot_frontend
-COPY chatbot_frontend/ .
+
+WORKDIR /app/frontend
+COPY frontend/package*.json ./
 RUN npm install
+COPY frontend/ ./
 RUN npm run build
 
-# ==== backend build ====
-FROM python:3.11 AS backend
-WORKDIR /chatbot-website
-COPY . .
+# Step 2: Build Python backend
+FROM python:3.11-slim AS backend
+
+# System deps
+RUN apt-get update && apt-get install -y \
+    build-essential libpq-dev curl netcat-openbsd gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+
+WORKDIR /app
+
+# Copy backend code
+COPY backend/ backend/
+COPY backend/requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy built frontend into Django static root
+COPY --from=frontend /app/frontend/build /app/backend/frontend_build
+
+# Collect static
+ENV DJANGO_SETTINGS_MODULE=backend.settings
+WORKDIR /app/backend
 RUN python manage.py collectstatic --noinput
 
-# ==== production image ====
-FROM python:3.11 AS prod
+# Step 3: Final Image with Nginx
+FROM nginx:1.25-alpine
 
-# Instalacja zależności Python
-WORKDIR /chatbot-website
+# Copy nginx config
+COPY nginx/nginx-setup.conf /etc/nginx/conf.d/default.conf
 
-# Kopiowanie aplikacji backendowej
-COPY --from=backend /chatbot-website /chatbot-website
-COPY requirements.txt .
+# Copy Django static and media
+COPY --from=backend /app/backend/staticfiles /static
+COPY --from=backend /app/backend/media /media
 
-# Instalowanie zależności
-RUN pip install --no-cache-dir -r requirements.txt
+# Copy backend app
+COPY --from=backend /app/backend /app/backend
 
-# Kopiowanie builda frontendowego do katalogu static
-COPY --from=frontend /chatbot_frontend/build /chatbot_website/static
+# Daphne + Entrypoint
+RUN apk add --no-cache python3 py3-pip && \
+    pip install "daphne" "channels" -r /app/backend/../requirements.txt
 
-# Ekspozycja portów
-EXPOSE 8000
+EXPOSE 80
 
-# Uruchomienie aplikacji Django za pomocą Daphne
-CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "chatbot_backend.asgi:application"]
+CMD daphne -b 0.0.0.0 -p 8000 backend.asgi:application & nginx -g "daemon off;"

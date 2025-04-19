@@ -7,7 +7,9 @@ const Chat = () => {
   const socketRef = useRef(null);
 
   useEffect(() => {
-    socketRef.current = new WebSocket(`wss://${window.location.host}/ws/chat/`);
+    const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+    const host = window.location.host;
+    socketRef.current = new WebSocket(`${protocol}://${host}/ws/chat/`);
     socketRef.current.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.message) {
