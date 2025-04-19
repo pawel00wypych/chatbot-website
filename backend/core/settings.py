@@ -58,15 +58,16 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'backend.core.urls'
+ROOT_URLCONF = 'core.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'static')],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -76,7 +77,7 @@ TEMPLATES = [
 ]
 
 # ASGI for websocket support
-ASGI_APPLICATION = "backend.asgi.application"
+ASGI_APPLICATION = "core.asgi.application"
 
 # REDIS_URL = os.environ.get("REDIS_URL", "redis://localhost:6379")
 #
