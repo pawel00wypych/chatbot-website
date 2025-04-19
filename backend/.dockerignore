@@ -1,0 +1,41 @@
+# Node modules for frontend (we'll install them in the container)
+node_modules
+
+# Python virtual environment
+*/venv
+
+# Django database files (if you are using SQLite, for example)
+backend/db.sqlite3
+
+# PyCharm or other IDE files
+*.idea
+*.vscode
+
+# Python bytecode files
+__pycache__
+*.pyc
+*.pyo
+
+# Django migration files (if they are not needed in the image)
+backend/migrations/
+
+# Nginx log files
+nginx/*.log
+
+# Git directory and files
+.git
+.gitignore
+
+# Logs
+*.log
+
+# OS-specific files (Mac, Windows)
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.swp
+Dockerfile
+docker-compose.yml
+../.env

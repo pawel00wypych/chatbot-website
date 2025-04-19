@@ -1,9 +1,0 @@
-Django>=4
-djangorestframework
-pymongo
-numpy
-pandas
-channels
-channels_redis
-daphne>=4.0
-google-generativeai

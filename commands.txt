@@ -1,0 +1,4 @@
+docker build -t myapp:latest .
+docker run -p 80:8080 -e GEMINI_API_KEY='' -e SECRET_KEY='' --name myapp myapp:latest
+
+App finally works after setting Railway port to 8080 -> Railway PORT = listen PORT;
