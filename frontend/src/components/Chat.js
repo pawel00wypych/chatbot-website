@@ -1,4 +1,3 @@
-// src/components/Chat.js
 import React, { useState, useEffect, useRef } from "react";
 
 const Chat = () => {
@@ -10,6 +9,7 @@ const Chat = () => {
     const protocol = window.location.protocol === "https:" ? "wss" : "ws";
     const host = window.location.host;
     socketRef.current = new WebSocket(`${protocol}://${host}/ws/chat/`);
+
     socketRef.current.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.message) {
@@ -18,6 +18,7 @@ const Chat = () => {
         setMessages((prev) => [...prev, { sender: "bot", text: `[Error]: ${data.error}` }]);
       }
     };
+
     return () => socketRef.current.close();
   }, []);
 
@@ -30,23 +31,24 @@ const Chat = () => {
   };
 
   return (
-    <div style={{ padding: "2rem", maxWidth: "600px", margin: "auto" }}>
-      <div style={{ border: "1px solid #ccc", padding: "1rem", height: "400px", overflowY: "auto" }}>
+    <div className="chat-container">
+      <div className="chat-box">
         {messages.map((msg, i) => (
-          <div key={i} style={{ textAlign: msg.sender === "user" ? "right" : "left" }}>
+          <div key={i} className={`message ${msg.sender === "user" ? "user" : "bot"}`}>
             <p><strong>{msg.sender}:</strong> {msg.text}</p>
           </div>
         ))}
       </div>
-      <div style={{ marginTop: "1rem", display: "flex" }}>
+
+      <div className="input-area">
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-          style={{ flexGrow: 1, padding: "0.5rem" }}
+          placeholder="Type your message..."
         />
-        <button onClick={sendMessage} style={{ marginLeft: "1rem" }}>Send</button>
+        <button onClick={sendMessage}>Send</button>
       </div>
     </div>
   );
