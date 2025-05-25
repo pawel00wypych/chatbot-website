@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 
 const Chat = () => {
-  const [messages, setMessages] = useState([{ sender: "bot", text: "Hi! Ask me anything." }]);
+  const [messages, setMessages] = useState([
+    { sender: "bot", text: "Hi! Ask me anything." },
+  ]);
   const [input, setInput] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
   const socketRef = useRef(null);
 
   useEffect(() => {
@@ -10,12 +13,48 @@ const Chat = () => {
     const host = window.location.host;
     socketRef.current = new WebSocket(`${protocol}://${host}/ws/chat/`);
 
+    let streamingBuffer = "";
+
     socketRef.current.onmessage = (event) => {
       const data = JSON.parse(event.data);
+
+      if (data.typing) {
+        setIsTyping(true);
+        return;
+      }
+
+      if (data.partial) {
+        // Display incoming message progressively
+        streamingBuffer += data.partial;
+        setMessages((prev) => {
+          const updated = [...prev];
+          if (updated[updated.length - 1]?.sender === "bot" && !updated[updated.length - 1]?.final) {
+            updated[updated.length - 1].text = streamingBuffer;
+          } else {
+            updated.push({ sender: "bot", text: streamingBuffer });
+          }
+          return updated;
+        });
+        return;
+      }
+
       if (data.message) {
-        setMessages((prev) => [...prev, { sender: "bot", text: data.message }]);
-      } else if (data.error) {
-        setMessages((prev) => [...prev, { sender: "bot", text: `[Error]: ${data.error}` }]);
+        setIsTyping(false);
+        setMessages((prev) => [...prev, { sender: "bot", text: data.message, final: true }]);
+        streamingBuffer = "";
+      }
+
+      if (data.done) {
+        setIsTyping(false);
+        streamingBuffer = "";
+      }
+
+      if (data.error) {
+        setIsTyping(false);
+        setMessages((prev) => [
+          ...prev,
+          { sender: "bot", text: `[Error]: ${data.error}` },
+        ]);
       }
     };
 
@@ -27,6 +66,7 @@ const Chat = () => {
       socketRef.current.send(JSON.stringify({ message: input }));
       setMessages((prev) => [...prev, { sender: "user", text: input }]);
       setInput("");
+      setIsTyping(true);
     }
   };
 
@@ -38,6 +78,11 @@ const Chat = () => {
             <p><strong>{msg.sender}:</strong> {msg.text}</p>
           </div>
         ))}
+        {isTyping && (
+          <div className="message bot">
+            <p><em>Bot is typing...</em></p>
+          </div>
+        )}
       </div>
 
       <div className="input-area">

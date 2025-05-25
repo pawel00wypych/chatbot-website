@@ -149,3 +149,14 @@ header h1 {
 .input-area button:hover {
   background-color: var(--button-hover-bg);
 }
+
+.message.bot em::after {
+  content: '...';
+  animation: dots 1s steps(3, end) infinite;
+}
+
+@keyframes dots {
+  0% { content: '.'; }
+  33% { content: '..'; }
+  66% { content: '...'; }
+}
