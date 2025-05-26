@@ -1,38 +1,235 @@
-.App {
+/* ========== Base Wrapper & Theme Setup ========== */
+.app-wrapper {
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
+  padding: 1rem;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* LIGHT THEME */
+.app-wrapper.light {
+  --bg-color: #f0f0f0;
+  --text-color: #222;
+  --chat-bg: #fff;
+  --chat-border: #ccc;
+  --input-bg: #fff;
+  --input-border: #ccc;
+  --message-bot-bg: rgba(0, 123, 255, 0.1);
+  --message-user-bg: rgba(0, 123, 255, 0.7);
+  --button-bg: #007bff;
+  --button-hover-bg: #0056b3;
+}
+
+/* DARK THEME */
+.app-wrapper.dark {
+  --bg-color: #121212;
+  --text-color: #eee;
+  --chat-bg: #1e1e1e;
+  --chat-border: #444;
+  --input-bg: #333;
+  --input-border: #555;
+  --message-bot-bg: rgba(0, 123, 255, 0.3);
+  --message-user-bg: rgba(0, 123, 255, 0.9);
+  --button-bg: #3399ff;
+  --button-hover-bg: #1a73e8;
+}
+
+/* ========== Header & Theme Toggle ========== */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+header h1 {
+  margin: 0;
+}
+
+.theme-toggle-btn {
+  background: none;
+  border: 2px solid var(--text-color);
+  border-radius: 20px;
+  color: var(--text-color);
+  padding: 0.3rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.theme-toggle-btn:hover {
+  background-color: var(--text-color);
+  color: var(--bg-color);
+}
+
+/* ========== Chat ========== */
+.chat-container {
+  max-width: 600px;
+  margin: 0 auto;
+  background-color: var(--chat-bg);
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  padding: 1rem;
+}
+
+.chat-box {
+  height: 400px;
+  overflow-y: auto;
+  border: 1px solid var(--chat-border);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  color: var(--text-color);
+  background-color: var(--chat-bg);
+}
+
+.message {
+  margin-bottom: 0.75rem;
+  max-width: 80%;
+  padding: 0.5rem 1rem;
+  border-radius: 15px;
+  word-wrap: break-word;
+}
+
+.message.bot {
+  background-color: var(--message-bot-bg);
+  color: var(--text-color);
+  text-align: left;
+}
+
+.message.user {
+  background-color: var(--message-user-bg);
+  color: white;
+  text-align: right;
+  margin-left: auto;
+}
+
+.message.bot em::after {
+  content: '...';
+  animation: dots 1s steps(3, end) infinite;
+}
+
+@keyframes dots {
+  0% { content: '.'; }
+  33% { content: '..'; }
+  66% { content: '...'; }
+}
+
+/* ========== Chat Input Area ========== */
+.input-area {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.input-area input {
+  flex-grow: 1;
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  border: 1px solid var(--input-border);
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.input-area input::placeholder {
+  color: #888;
+}
+
+.input-area button {
+  padding: 0 1.5rem;
+  border-radius: 25px;
+  border: none;
+  background-color: var(--button-bg);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.input-area button:hover {
+  background-color: var(--button-hover-bg);
+}
+
+/* ========== Auth Pages ========== */
+.auth-wrapper {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--bg-color);
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.auth-form {
+  background-color: var(--chat-bg);
+  color: var(--text-color);
+  padding: 40px 30px;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  width: 320px;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.auth-form h2 {
+  margin-bottom: 24px;
+  font-weight: 700;
+  font-size: 28px;
+  color: var(--text-color);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.auth-form input {
+  width: 100%;
+  padding: 12px 15px;
+  margin: 10px 0 20px 0;
+  border: 1.8px solid var(--input-border);
+  border-radius: 6px;
+  font-size: 16px;
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  transition: border-color 0.3s ease;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+.auth-form input:focus {
+  border-color: #667eea;
+  outline: none;
+  box-shadow: 0 0 8px rgba(102, 126, 234, 0.5);
+}
+
+.auth-form button {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--button-bg);
+  border: none;
+  border-radius: 6px;
   color: white;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.App-link {
-  color: #61dafb;
+.auth-form button:hover {
+  background-color: var(--button-hover-bg);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+}
+
+.logout-button {
+  background-color: var(--button-bg);
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 4px;
 }

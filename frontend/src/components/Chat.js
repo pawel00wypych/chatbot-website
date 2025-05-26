@@ -1,23 +1,65 @@
-// src/components/Chat.js
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom"; // if you're using React Router
 
 const Chat = () => {
-  const [messages, setMessages] = useState([{ sender: "bot", text: "Hi! Ask me anything." }]);
+  const [messages, setMessages] = useState([
+    { sender: "bot", text: "Hi! Ask me anything." },
+  ]);
   const [input, setInput] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
   const socketRef = useRef(null);
+  const navigate = useNavigate(); // for navigation on logout
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
     const protocol = window.location.protocol === "https:" ? "wss" : "ws";
     const host = window.location.host;
-    socketRef.current = new WebSocket(`${protocol}://${host}/ws/chat/`);
+    socketRef.current = new WebSocket(`${protocol}://${host}/ws/chat/?token=${token}`);
+
+    let streamingBuffer = "";
+
     socketRef.current.onmessage = (event) => {
       const data = JSON.parse(event.data);
+
+      if (data.typing) {
+        setIsTyping(true);
+        return;
+      }
+
+      if (data.partial) {
+        streamingBuffer += data.partial;
+        setMessages((prev) => {
+          const updated = [...prev];
+          if (updated[updated.length - 1]?.sender === "bot" && !updated[updated.length - 1]?.final) {
+            updated[updated.length - 1].text = streamingBuffer;
+          } else {
+            updated.push({ sender: "bot", text: streamingBuffer });
+          }
+          return updated;
+        });
+        return;
+      }
+
       if (data.message) {
-        setMessages((prev) => [...prev, { sender: "bot", text: data.message }]);
-      } else if (data.error) {
-        setMessages((prev) => [...prev, { sender: "bot", text: `[Error]: ${data.error}` }]);
+        setIsTyping(false);
+        setMessages((prev) => [...prev, { sender: "bot", text: data.message, final: true }]);
+        streamingBuffer = "";
+      }
+
+      if (data.done) {
+        setIsTyping(false);
+        streamingBuffer = "";
+      }
+
+      if (data.error) {
+        setIsTyping(false);
+        setMessages((prev) => [
+          ...prev,
+          { sender: "bot", text: `[Error]: ${data.error}` },
+        ]);
       }
     };
+
     return () => socketRef.current.close();
   }, []);
 
@@ -26,27 +68,44 @@ const Chat = () => {
       socketRef.current.send(JSON.stringify({ message: input }));
       setMessages((prev) => [...prev, { sender: "user", text: input }]);
       setInput("");
+      setIsTyping(true);
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login"); // redirect to login page
+  };
+
   return (
-    <div style={{ padding: "2rem", maxWidth: "600px", margin: "auto" }}>
-      <div style={{ border: "1px solid #ccc", padding: "1rem", height: "400px", overflowY: "auto" }}>
+    <div className="chat-container">
+      <div className="chat-header">
+        <h2>ChatBot</h2>
+        <button onClick={handleLogout} className="logout-button">Logout</button>
+      </div>
+
+      <div className="chat-box">
         {messages.map((msg, i) => (
-          <div key={i} style={{ textAlign: msg.sender === "user" ? "right" : "left" }}>
+          <div key={i} className={`message ${msg.sender === "user" ? "user" : "bot"}`}>
             <p><strong>{msg.sender}:</strong> {msg.text}</p>
           </div>
         ))}
+        {isTyping && (
+          <div className="message bot">
+            <p><em>Bot is typing...</em></p>
+          </div>
+        )}
       </div>
-      <div style={{ marginTop: "1rem", display: "flex" }}>
+
+      <div className="input-area">
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-          style={{ flexGrow: 1, padding: "0.5rem" }}
+          placeholder="Type your message..."
         />
-        <button onClick={sendMessage} style={{ marginLeft: "1rem" }}>Send</button>
+        <button onClick={sendMessage}>Send</button>
       </div>
     </div>
   );

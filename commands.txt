@@ -2,3 +2,10 @@ docker build -t myapp:latest .
 docker run -p 80:8080 -e GEMINI_API_KEY='' -e SECRET_KEY='' --name myapp myapp:latest
 
 App finally works after setting Railway port to 8080 -> Railway PORT = listen PORT;
+
+for local development:
+docker run -d --name mongo -p 27017:27017 --network my_app_network -v mongo_data:/data/db mongo:8
+
+docker build -t fullstack-app .
+
+docker run --network my_app_network -p 8080:8080 fullstack-app
