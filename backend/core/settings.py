@@ -118,7 +118,7 @@ CHANNEL_LAYERS = {
 #)
 
 # PROD
-connect(host=os.environ.get("MONGODB_URI"))
+connect(host=os.environ.get("MONGODB_URL"))
 
 DATABASES = {}
 
