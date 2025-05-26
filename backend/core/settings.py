@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-import dj_database_url
 from pathlib import Path
 import os
 from dotenv import load_dotenv
@@ -25,8 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 load_dotenv()
-SECRET_KEY = "5ev3-%=7n@^kqrh!jb5z2c$(f"
-#SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = os.getenv('SECRET_KEY')
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -112,11 +110,15 @@ CHANNEL_LAYERS = {
 }
 
 # Database
-connect(
-    db="mydatabase",
-    host="mongo",
-    port=27017
-)
+# for development
+#connect(
+#    db="mydatabase",
+#    host="mongo",
+#    port=27017
+#)
+
+# PROD
+connect(host=os.environ.get("MONGODB_URI"))
 
 DATABASES = {}
 

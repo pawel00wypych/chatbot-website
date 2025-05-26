@@ -15,7 +15,6 @@ const Login = ({ setUser }) => {
 
     const data = await res.json();
     if (res.ok) {
-      console.log("Login success, data:", data);
       localStorage.setItem("token", data.access);
       localStorage.setItem("user", JSON.stringify({ email: data.email }));
       setUser({ email: data.email });
