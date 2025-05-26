@@ -46,6 +46,10 @@ const Login = ({ setUser }) => {
         <button onClick={login} className="login-btn">
           Login
         </button>
+        <p>Don't have an account?</p>
+        <button onClick={() => navigate("/register")} className="link-btn">
+          Register
+        </button>
       </div>
     </div>
   );

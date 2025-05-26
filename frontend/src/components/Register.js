@@ -32,6 +32,8 @@ const Register = () => {
         <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
         <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" />
         <button onClick={handleRegister} className="theme-toggle-btn">Register</button>
+        <p>Already have an account?</p>
+        <button onClick={() => navigate("/login")} className="link-btn">Login</button>
       </div>
     </div>
   );

@@ -217,3 +217,19 @@ header h1 {
 .auth-form button:hover {
   background-color: var(--button-hover-bg);
 }
+
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+}
+
+.logout-button {
+  background-color: var(--button-bg);
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+}

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom"; // if you're using React Router
 
 const Chat = () => {
   const [messages, setMessages] = useState([
@@ -7,6 +8,7 @@ const Chat = () => {
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const socketRef = useRef(null);
+  const navigate = useNavigate(); // for navigation on logout
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -25,7 +27,6 @@ const Chat = () => {
       }
 
       if (data.partial) {
-        // Display incoming message progressively
         streamingBuffer += data.partial;
         setMessages((prev) => {
           const updated = [...prev];
@@ -71,8 +72,18 @@ const Chat = () => {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login"); // redirect to login page
+  };
+
   return (
     <div className="chat-container">
+      <div className="chat-header">
+        <h2>ChatBot</h2>
+        <button onClick={handleLogout} className="logout-button">Logout</button>
+      </div>
+
       <div className="chat-box">
         {messages.map((msg, i) => (
           <div key={i} className={`message ${msg.sender === "user" ? "user" : "bot"}`}>
