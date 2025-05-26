@@ -18,8 +18,11 @@ from django.contrib import admin
 from django.urls import path
 from django.views.decorators.cache import never_cache
 from django.views.generic import TemplateView
+from .api import RegisterView, LoginView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/register', RegisterView.as_view()),
+    path('api/login', LoginView.as_view()),
     path('', never_cache(TemplateView.as_view(template_name="index.html"))),
 ]

@@ -1,9 +1,13 @@
 Django>=4.2
 djangorestframework
-pymongo
 channels
 channels_redis
 daphne
 google-generativeai
 dj_database_url
 python-dotenv
+djangorestframework-simplejwt
+PyJWT
+django-cors-headers
+pymongo
+mongoengine

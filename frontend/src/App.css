@@ -1,8 +1,10 @@
-/* Base wrapper for light and dark */
+/* ========== Base Wrapper & Theme Setup ========== */
 .app-wrapper {
   font-family: Arial, sans-serif;
   min-height: 100vh;
   padding: 1rem;
+  background-color: var(--bg-color);
+  color: var(--text-color);
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -34,13 +36,7 @@
   --button-hover-bg: #1a73e8;
 }
 
-/* Apply variables */
-.app-wrapper {
-  background-color: var(--bg-color);
-  color: var(--text-color);
-}
-
-/* Header */
+/* ========== Header & Theme Toggle ========== */
 header {
   display: flex;
   justify-content: space-between;
@@ -52,7 +48,6 @@ header h1 {
   margin: 0;
 }
 
-/* Toggle button */
 .theme-toggle-btn {
   background: none;
   border: 2px solid var(--text-color);
@@ -61,7 +56,7 @@ header h1 {
   padding: 0.3rem 1rem;
   font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .theme-toggle-btn:hover {
@@ -69,7 +64,7 @@ header h1 {
   color: var(--bg-color);
 }
 
-/* Chat container */
+/* ========== Chat ========== */
 .chat-container {
   max-width: 600px;
   margin: 0 auto;
@@ -79,7 +74,6 @@ header h1 {
   padding: 1rem;
 }
 
-/* Chat box */
 .chat-box {
   height: 400px;
   overflow-y: auto;
@@ -91,7 +85,6 @@ header h1 {
   background-color: var(--chat-bg);
 }
 
-/* Messages */
 .message {
   margin-bottom: 0.75rem;
   max-width: 80%;
@@ -113,7 +106,18 @@ header h1 {
   margin-left: auto;
 }
 
-/* Input area */
+.message.bot em::after {
+  content: '...';
+  animation: dots 1s steps(3, end) infinite;
+}
+
+@keyframes dots {
+  0% { content: '.'; }
+  33% { content: '..'; }
+  66% { content: '...'; }
+}
+
+/* ========== Chat Input Area ========== */
 .input-area {
   display: flex;
   gap: 0.75rem;
@@ -124,10 +128,10 @@ header h1 {
   padding: 0.5rem 1rem;
   border-radius: 25px;
   border: 1px solid var(--input-border);
-  outline: none;
-  font-size: 1rem;
   background-color: var(--input-bg);
   color: var(--text-color);
+  font-size: 1rem;
+  outline: none;
   transition: border-color 0.3s;
 }
 
@@ -150,13 +154,66 @@ header h1 {
   background-color: var(--button-hover-bg);
 }
 
-.message.bot em::after {
-  content: '...';
-  animation: dots 1s steps(3, end) infinite;
+/* ========== Auth Pages ========== */
+.auth-wrapper {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--bg-color);
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-@keyframes dots {
-  0% { content: '.'; }
-  33% { content: '..'; }
-  66% { content: '...'; }
+.auth-form {
+  background-color: var(--chat-bg);
+  color: var(--text-color);
+  padding: 40px 30px;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  width: 320px;
+  text-align: center;
+}
+
+.auth-form h2 {
+  margin-bottom: 24px;
+  font-weight: 700;
+  font-size: 28px;
+  color: var(--text-color);
+}
+
+.auth-form input {
+  width: 100%;
+  padding: 12px 15px;
+  margin: 10px 0 20px 0;
+  border: 1.8px solid var(--input-border);
+  border-radius: 6px;
+  font-size: 16px;
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  transition: border-color 0.3s ease;
+}
+
+.auth-form input:focus {
+  border-color: #667eea;
+  outline: none;
+  box-shadow: 0 0 8px rgba(102, 126, 234, 0.5);
+}
+
+.auth-form button {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--button-bg);
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.auth-form button:hover {
+  background-color: var(--button-hover-bg);
 }

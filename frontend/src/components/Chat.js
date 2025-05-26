@@ -9,9 +9,10 @@ const Chat = () => {
   const socketRef = useRef(null);
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
     const protocol = window.location.protocol === "https:" ? "wss" : "ws";
     const host = window.location.host;
-    socketRef.current = new WebSocket(`${protocol}://${host}/ws/chat/`);
+    socketRef.current = new WebSocket(`${protocol}://${host}/ws/chat/?token=${token}`);
 
     let streamingBuffer = "";
 
