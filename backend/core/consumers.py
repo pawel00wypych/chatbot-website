@@ -3,6 +3,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 import asyncio
 import os
 import google.generativeai as genai
+from models import ChatMessage
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if not GEMINI_API_KEY:
@@ -32,6 +33,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 await self.send(text_data=json.dumps({"error": "Empty message"}))
                 return
 
+            await save_message(self.user, "user", user_msg)
+
             # Run blocking Gemini API in executor
             loop = asyncio.get_event_loop()
             try:
@@ -51,8 +54,23 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     text_chunks.append(chunk.text)
 
             bot_response = "".join(text_chunks)
+            await save_message(self.user, "bot", bot_response)
 
             await self.send(text_data=json.dumps({"message": bot_response}))
 
         except Exception as e:
             await self.send(text_data=json.dumps({"error": f"Error: {str(e)}"}))
+
+async def save_message(user, sender, text):
+
+    from asgiref.sync import sync_to_async
+
+    @sync_to_async
+    def _save():
+        ChatMessage(user=user, sender=sender, text=text).save()
+        count = ChatMessage.objects(user=user).count()
+        if count > 100:
+            old_msgs = ChatMessage.objects(user=user).order_by('timestamp')[:count - 100]
+            for msg in old_msgs:
+                msg.delete()
+    await _save()

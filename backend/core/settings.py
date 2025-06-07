@@ -27,6 +27,7 @@ load_dotenv()
 SECRET_KEY = os.getenv('SECRET_KEY')
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
@@ -39,8 +40,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+        'mongo_JWT_authentication.MongoJWTAuthentication',
+    ),
 }
 
 CORS_ALLOW_ALL_ORIGINS = True
