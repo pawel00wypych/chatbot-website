@@ -2,12 +2,21 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Register = () => {
+
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const handleRegister = async () => {
     try {
+      const passwordValid = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{10,}$/.test(password);
+
+      if (!passwordValid) {
+        alert("Password must be at least 10 characters long and include:\n- 1 uppercase letter\n- 1 lowercase letter\n- 1 digit\n- 1 special character");
+        return;
+      }
+
       const res = await fetch("/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

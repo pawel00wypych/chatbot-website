@@ -1,14 +1,39 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom"; // if you're using React Router
+import { useNavigate } from "react-router-dom";
 
 const Chat = () => {
-  const [messages, setMessages] = useState([
-    { sender: "bot", text: "Hi! Ask me anything." },
-  ]);
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const socketRef = useRef(null);
-  const navigate = useNavigate(); // for navigation on logout
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch("/api/chat/history/", {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+          },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (data.length === 0) {
+            // Jeśli brak historii
+            setMessages([{ sender: "bot", text: "Hi! Ask me anything." }]);
+          } else {
+            setMessages(data);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch history:", error);
+        setMessages([{ sender: "bot", text: "Hi! Ask me anything." }]);
+      }
+    };
+
+    fetchHistory();
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -74,7 +99,7 @@ const Chat = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    navigate("/login"); // redirect to login page
+    navigate("/login");
   };
 
   return (
